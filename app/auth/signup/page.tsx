@@ -3,6 +3,7 @@
 import { useState } from "react";
 import DarkVeil from "../../../components/DarkVeil";
 import { useRouter } from "next/navigation";
+import { signUpWithEmail, signInWithGoogle } from "../../../lib/auth-actions";
 
 export default function SignupPage() {
   const [formData, setFormData] = useState({
@@ -45,25 +46,34 @@ export default function SignupPage() {
     }
 
     try {
-      // Firebase authentication will be implemented here
-      console.log("Signup attempt:", {
-        ...formData,
-        confirmPassword: undefined,
-      });
+      await signUpWithEmail(formData.email, formData.password);
+      setSuccess("Account created successfully! Redirecting to home...");
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      setSuccess(
-        "Account created successfully! Please check your email to verify your account."
-      );
-
-      // Redirect to login after successful signup
+      // Redirect to home after successful signup
       setTimeout(() => {
-        router.push("/auth/login");
+        router.push("/");
       }, 2000);
-    } catch (err) {
-      setError("Failed to create account. Please try again.");
+    } catch (err: any) {
+      setError(err.message || "Failed to create account. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGoogleSignup = async () => {
+    setIsLoading(true);
+    setError("");
+
+    try {
+      await signInWithGoogle();
+      setSuccess("Account created successfully! Redirecting to home...");
+
+      // Redirect to home after successful signup
+      setTimeout(() => {
+        router.push("/");
+      }, 2000);
+    } catch (err: any) {
+      setError(err.message || "Google signup failed. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -102,7 +112,7 @@ export default function SignupPage() {
                 </span>
               </div>
               <span className="font-display font-bold text-2xl tracking-tight text-white neon-text-glow">
-                Cold Blue Neon
+                Phenom Auth
               </span>
             </div>
             <h2 className="font-display text-3xl font-bold text-white mb-2">
@@ -303,9 +313,25 @@ export default function SignupPage() {
 
             {/* Social Signup */}
             <div className="grid grid-cols-2 gap-3">
-              <button className="flex items-center justify-center gap-2 px-4 py-2 bg-charcoal/50 border border-white/10 rounded-lg text-white hover:bg-charcoal/70 hover:border-neon-purple/50 transition-all">
+              <button
+                onClick={handleGoogleSignup}
+                disabled={isLoading}
+                className="
+      flex items-center justify-center gap-2
+      px-4 py-2 rounded-lg
+      bg-[#0f1328]/70
+      border border-blue-400/15
+      text-white
+      transition-all duration-300
+      hover:bg-[#141a3a]/80
+      hover:border-blue-400/40
+      hover:shadow-[0_0_18px_rgba(59,130,246,0.25)]
+      active:scale-[0.98]
+      disabled:opacity-50
+    "
+              >
                 <span
-                  className="material-symbols-outlined"
+                  className="material-symbols-outlined text-blue-400"
                   style={{ fontSize: "20px" }}
                 >
                   mail

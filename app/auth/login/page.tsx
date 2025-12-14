@@ -3,6 +3,7 @@
 import { useState } from "react";
 import DarkVeil from "../../../components/DarkVeil";
 import { useRouter } from "next/navigation";
+import { signInWithEmail, signInWithGoogle } from "../../../lib/auth-actions";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -11,22 +12,40 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError("");
 
     try {
-      // Firebase authentication will be implemented here
-      console.log("Login attempt:", { email, password });
+      await signInWithEmail(email, password);
+      // Add a small delay to ensure auth state is updated before redirect
+      setTimeout(() => {
+        router.push("/");
+      }, 100);
+    } catch (err: any) {
+      setError(err.message || "Login failed. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+  const handleGoogleLogin = async () => {
+    setIsLoading(true);
+    setError("");
 
-      // For now, just redirect to dashboard
-      router.push("/dashboard");
-    } catch (err) {
-      setError("Invalid email or password");
+    try {
+      console.log("Starting Google sign-in from login page...");
+      const user = await signInWithGoogle();
+      console.log("Google sign-in successful, user:", user);
+
+      // Add a small delay to ensure auth state is updated before redirect
+      setTimeout(() => {
+        router.push("/");
+      }, 100);
+    } catch (err: any) {
+      console.error("Google login failed:", err);
+      setError(err.message || "Google login failed. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -37,8 +56,8 @@ export default function LoginPage() {
       {/* DarkVeil Background */}
       <div className="absolute inset-0 z-0">
         <DarkVeil
-          hueShift={215} // 🔵 pure blue (210–225 safe zone)
-          noiseIntensity={0.012} // less noise = less color bleed
+          hueShift={215}
+          noiseIntensity={0.012}
           scanlineIntensity={0.035}
           speed={0.25}
           scanlineFrequency={0.6}
@@ -70,7 +89,7 @@ to-transparent backdrop-blur-sm z-10"
                 </span>
               </div>
               <span className="font-display font-bold text-2xl tracking-tight text-white neon-text-glow">
-                Cold Blue Neon
+                Phenom Auth
               </span>
             </div>
             <h2 className="font-display text-3xl font-bold text-white mb-2">
@@ -81,7 +100,7 @@ to-transparent backdrop-blur-sm z-10"
 
           {/* Login Form */}
           <div className="glass-panel p-8 rounded-2xl border border-white/10">
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleEmailLogin} className="space-y-6">
               {error && (
                 <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-3">
                   <p className="text-red-400 text-sm text-center">{error}</p>
@@ -196,6 +215,8 @@ to-transparent backdrop-blur-sm z-10"
             {/* Social Login */}
             <div className="grid grid-cols-2 gap-3">
               <button
+                onClick={handleGoogleLogin}
+                disabled={isLoading}
                 className="
       flex items-center justify-center gap-2
       px-4 py-2 rounded-lg
@@ -207,6 +228,7 @@ to-transparent backdrop-blur-sm z-10"
       hover:border-blue-400/40
       hover:shadow-[0_0_18px_rgba(59,130,246,0.25)]
       active:scale-[0.98]
+      disabled:opacity-50
     "
               >
                 <span

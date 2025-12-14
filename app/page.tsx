@@ -1,9 +1,57 @@
+"use client";
+
 import DarkVeil from "../components/DarkVeil";
 import Galaxy from "../components/GalaxyOptimized";
 import Header from "../components/Header";
 import HeroAIPanel from "@/components/AiPanel";
+import { useAuth } from "../lib/auth-context";
 
 export default function Home() {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="font-body overflow-x-hidden min-h-screen relative selection:bg-neon-purple selection:text-white bg-deep-navy text-white">
+        <div className="relative overflow-hidden min-h-screen galaxy-wrapper">
+          <div
+            aria-hidden="true"
+            className="galaxy-container min-h-[1400px] md:min-h-[1600px] lg:min-h-[1800px]"
+          >
+            <Galaxy
+              mouseRepulsion={false}
+              mouseInteraction={false}
+              density={0.85}
+              glowIntensity={0.25}
+              saturation={0.15}
+              hueShift={215}
+              speed={0.06}
+              rotationSpeed={0.008}
+              twinkleIntensity={0.12}
+              repulsionStrength={0.08}
+              className="galaxy-canvas"
+            />
+          </div>
+          <Header />
+          <div className="relative pt-16 lg:pt-20 pb-20 lg:pb-32 px-6 z-10">
+            <div className="max-w-7xl mx-auto">
+              <div className="flex flex-col lg:flex-row gap-16 items-center">
+                <div className="flex-1 max-w-2xl">
+                  <div className="text-center">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-deep-violet/40 border border-neon-purple/40 text-light-purple text-xs font-medium mb-6 animate-pulse backdrop-blur-sm">
+                      <span className="w-2 h-2 rounded-full bg-neon-purple shadow-[0_0_10px_rgba(106,77,244,0.8)]"></span>
+                      Loading...
+                    </div>
+                    <div className="w-16 h-16 border-4 border-neon-purple border-t-transparent rounded-full animate-spin mx-auto"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="font-body overflow-x-hidden min-h-screen relative selection:bg-neon-purple selection:text-white bg-deep-navy text-white">
       {/* Galaxy Background Container - Covers sections before "Full Stack Automation" */}
@@ -30,8 +78,8 @@ export default function Home() {
         {/* Header */}
         <Header />
 
-        {/* Hero Section */}
-        <div className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 px-6 z-10">
+        {/* Hero Section - Added pt-16 to account for fixed header */}
+        <div className="relative pt-16 lg:pt-20 pb-20 lg:pb-32 px-6 z-10">
           <div className="max-w-7xl mx-auto">
             <div className="flex flex-col lg:flex-row gap-16 items-center">
               {/* Text Content */}
@@ -299,9 +347,9 @@ export default function Home() {
               <span className="material-symbols-outlined text-4xl text-neon-purple mb-6 block mx-auto">
                 format_quote
               </span>
-              <h2 className="font-display text-2xl md:text-4xl font-bold text-white mb-8 max-w-3xl mx-auto leading-tight">
-                "Cold Blue Neon completely transformed our engineering velocity.
-                We went from deploying once a week to{" "}
+              <h2 className="font-display text-2xl md:text-4xl font-bold text-white mb-8 max-3xl mx-auto leading-tight">
+                "Phenom Auth completely transformed our engineering velocity. We
+                went from deploying once a week to{" "}
                 <span className="text-mid-purple">multiple times a day</span>{" "}
                 without hiring more backend engineers."
               </h2>
@@ -366,7 +414,7 @@ export default function Home() {
                   </span>
                 </div>
                 <span className="font-display font-bold text-xl text-white">
-                  Cold Blue Neon
+                  Phenom Auth
                 </span>
               </div>
               <p className="text-white/40 text-sm max-w-xs mb-6">
@@ -516,7 +564,7 @@ export default function Home() {
           </div>
           <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-white/30 text-sm">
-              © 2024 Cold Blue Neon Inc. All rights reserved.
+              © 2024 Phenom Auth Inc. All rights reserved.
             </p>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
