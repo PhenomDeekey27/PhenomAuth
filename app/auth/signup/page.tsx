@@ -3,7 +3,11 @@
 import { useState } from "react";
 import DarkVeil from "../../../components/DarkVeil";
 import { useRouter } from "next/navigation";
-import { signUpWithEmail, signInWithGoogle } from "../../../lib/auth-actions";
+import {
+  signUpWithEmail,
+  signInWithGoogle,
+  signInWithGithub,
+} from "../../../lib/auth-actions";
 
 export default function SignupPage() {
   const [formData, setFormData] = useState({
@@ -74,6 +78,27 @@ export default function SignupPage() {
       }, 2000);
     } catch (err: any) {
       setError(err.message || "Google signup failed. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGithubSignup = async () => {
+    setIsLoading(true);
+    setError("");
+
+    try {
+      console.log("Starting GitHub sign-in from signup page...");
+      const user = await signInWithGithub();
+      console.log("GitHub sign-in successful, user:", user);
+      setSuccess("Account created successfully! Redirecting to home...");
+
+      // Redirect to home after successful signup
+      setTimeout(() => {
+        router.push("/");
+      }, 2000);
+    } catch (err: any) {
+      setError(err.message || "GitHub signup failed. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -338,9 +363,25 @@ export default function SignupPage() {
                 </span>
                 <span className="text-sm font-medium">Google</span>
               </button>
-              <button className="flex items-center justify-center gap-2 px-4 py-2 bg-charcoal/50 border border-white/10 rounded-lg text-white hover:bg-charcoal/70 hover:border-neon-purple/50 transition-all">
+              <button
+                onClick={handleGithubSignup}
+                disabled={isLoading}
+                className="
+      flex items-center justify-center gap-2
+      px-4 py-2 rounded-lg
+      bg-[#0f1328]/70
+      border border-gray-400/15
+      text-white
+      transition-all duration-300
+      hover:bg-[#141a3a]/80
+      hover:border-gray-400/40
+      hover:shadow-[0_0_18px_rgba(156,163,175,0.25)]
+      active:scale-[0.98]
+      disabled:opacity-50
+    "
+              >
                 <span
-                  className="material-symbols-outlined"
+                  className="material-symbols-outlined text-gray-400"
                   style={{ fontSize: "20px" }}
                 >
                   code

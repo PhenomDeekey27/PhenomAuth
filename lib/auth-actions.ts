@@ -4,7 +4,7 @@ import {
   createUserWithEmailAndPassword,
   signOut,
 } from "firebase/auth";
-import { GoogleAuthProvider } from "firebase/auth";
+import { GoogleAuthProvider, GithubAuthProvider } from "firebase/auth";
 import { auth } from "./firebase";
 import { supabase } from "./supabase";
 
@@ -149,6 +149,54 @@ const upsertUserToSupabase = async (user: any) => {
     return data;
   } catch (error) {
     console.error("Exception in upsertUserToSupabase:", error);
+    throw error;
+  }
+};
+
+// Sign in with GitHub
+export const signInWithGithub = async () => {
+  try {
+    console.log("Starting GitHub sign-in...");
+    const provider = new GithubAuthProvider();
+
+    // Add required scopes
+    provider.addScope("read:user");
+    provider.addScope("user:email");
+
+    console.log("Calling signInWithPopup with GitHub provider...");
+    const result = await signInWithPopup(auth, provider);
+    console.log("signInWithPopup successful:", result);
+
+    const user = result.user;
+    console.log("Firebase user from GitHub:", {
+      uid: user.uid,
+      email: user.email,
+      displayName: user.displayName,
+      photoURL: user.photoURL,
+      providerData: user.providerData,
+    });
+
+    // Upsert user to Supabase
+    console.log("Upserting GitHub user to Supabase...");
+    try {
+      await upsertUserToSupabase(user);
+      console.log("GitHub user upserted successfully");
+    } catch (upsertError) {
+      console.error(
+        "Failed to upsert GitHub user to Supabase, but continuing with auth:",
+        upsertError
+      );
+      // Don't throw the error here - let the user sign in even if Supabase fails
+    }
+
+    return user;
+  } catch (error: any) {
+    console.error("Error signing in with GitHub:", error);
+    console.error("Error details:", {
+      message: error.message,
+      code: error.code,
+      customData: error.customData,
+    });
     throw error;
   }
 };

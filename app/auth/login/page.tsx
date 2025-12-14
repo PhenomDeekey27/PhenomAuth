@@ -3,7 +3,11 @@
 import { useState } from "react";
 import DarkVeil from "../../../components/DarkVeil";
 import { useRouter } from "next/navigation";
-import { signInWithEmail, signInWithGoogle } from "../../../lib/auth-actions";
+import {
+  signInWithEmail,
+  signInWithGoogle,
+  signInWithGithub,
+} from "../../../lib/auth-actions";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -46,6 +50,27 @@ export default function LoginPage() {
     } catch (err: any) {
       console.error("Google login failed:", err);
       setError(err.message || "Google login failed. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGithubLogin = async () => {
+    setIsLoading(true);
+    setError("");
+
+    try {
+      console.log("Starting GitHub sign-in from login page...");
+      const user = await signInWithGithub();
+      console.log("GitHub sign-in successful, user:", user);
+
+      // Add a small delay to ensure auth state is updated before redirect
+      setTimeout(() => {
+        router.push("/");
+      }, 100);
+    } catch (err: any) {
+      console.error("GitHub login failed:", err);
+      setError(err.message || "GitHub login failed. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -241,21 +266,24 @@ to-transparent backdrop-blur-sm z-10"
               </button>
 
               <button
+                onClick={handleGithubLogin}
+                disabled={isLoading}
                 className="
       flex items-center justify-center gap-2
       px-4 py-2 rounded-lg
       bg-[#0f1328]/70
-      border border-blue-400/15
+      border border-gray-400/15
       text-white
       transition-all duration-300
       hover:bg-[#141a3a]/80
-      hover:border-blue-400/40
-      hover:shadow-[0_0_18px_rgba(59,130,246,0.25)]
+      hover:border-gray-400/40
+      hover:shadow-[0_0_18px_rgba(156,163,175,0.25)]
       active:scale-[0.98]
+      disabled:opacity-50
     "
               >
                 <span
-                  className="material-symbols-outlined text-blue-400"
+                  className="material-symbols-outlined text-gray-400"
                   style={{ fontSize: "20px" }}
                 >
                   code

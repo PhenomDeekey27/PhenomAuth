@@ -9,6 +9,7 @@ import { useAuth } from "../lib/auth-context";
 export default function Home() {
   const { user, loading } = useAuth();
 
+  /* Commenting out loading animation as requested
   if (loading) {
     return (
       <div className="font-body overflow-x-hidden min-h-screen relative selection:bg-neon-purple selection:text-white bg-deep-navy text-white">
@@ -51,6 +52,7 @@ export default function Home() {
       </div>
     );
   }
+  */
 
   return (
     <div className="font-body overflow-x-hidden min-h-screen relative selection:bg-neon-purple selection:text-white bg-deep-navy text-white">

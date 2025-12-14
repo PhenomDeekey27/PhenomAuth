@@ -38,13 +38,13 @@ export default function Header() {
               <>
                 <Link
                   href="/auth/login"
-                  className="px-4 py-2 text-sm font-medium text-white hover:text-neon-purple transition-colors"
+                  className="px-4 py-2 text-sm font-medium text-white hover:text-neon-purple transition-colors cursor-pointer rounded-lg hover:bg-neon-purple/10 hover:shadow-[0_0_12px_rgba(106,77,244,0.3)] border border-transparent hover:border-neon-purple/30"
                 >
                   Login
                 </Link>
                 <Link
                   href="/auth/signup"
-                  className="px-4 py-2 text-sm font-medium text-white hover:text-neon-purple transition-colors"
+                  className="px-4 py-2 text-sm font-medium text-white hover:text-neon-purple transition-colors cursor-pointer rounded-lg hover:bg-neon-purple/10 hover:shadow-[0_0_12px_rgba(106,77,244,0.3)] border border-transparent hover:border-neon-purple/30"
                 >
                   Signup
                 </Link>
