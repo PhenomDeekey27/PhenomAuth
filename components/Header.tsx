@@ -28,7 +28,10 @@ export default function Header() {
     <header className="fixed top-0 left-0 right-0 z-50 bg-deep-navy/80 backdrop-blur-sm border-b border-white/10">
       <div className="container mx-auto px-4 py-4">
         <div className="flex justify-between items-center">
-          <Link href="/" className="text-xl font-bold text-white">
+          <Link
+            href={user ? "/dashboard" : "/"}
+            className="text-xl font-bold text-white"
+          >
             PhenomAuth
           </Link>
           <div className="flex items-center space-x-4">

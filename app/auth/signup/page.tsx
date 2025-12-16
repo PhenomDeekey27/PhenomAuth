@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import DarkVeil from "../../../components/DarkVeil";
 import { useRouter } from "next/navigation";
+import { useAuth } from "../../../lib/auth-context";
 import {
   signUpWithEmail,
   signInWithGoogle,
@@ -10,6 +11,7 @@ import {
 } from "../../../lib/auth-actions";
 
 export default function SignupPage() {
+  const { user, loading } = useAuth();
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -21,6 +23,12 @@ export default function SignupPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && user) {
+      router.push("/dashboard");
+    }
+  }, [user, loading, router]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -53,9 +61,9 @@ export default function SignupPage() {
       await signUpWithEmail(formData.email, formData.password);
       setSuccess("Account created successfully! Redirecting to home...");
 
-      // Redirect to home after successful signup
+      // Redirect to dashboard after successful signup
       setTimeout(() => {
-        router.push("/");
+        router.push("/dashboard");
       }, 2000);
     } catch (err: any) {
       setError(err.message || "Failed to create account. Please try again.");
@@ -72,9 +80,9 @@ export default function SignupPage() {
       await signInWithGoogle();
       setSuccess("Account created successfully! Redirecting to home...");
 
-      // Redirect to home after successful signup
+      // Redirect to dashboard after successful signup
       setTimeout(() => {
-        router.push("/");
+        router.push("/dashboard");
       }, 2000);
     } catch (err: any) {
       setError(err.message || "Google signup failed. Please try again.");
@@ -93,9 +101,9 @@ export default function SignupPage() {
       console.log("GitHub sign-in successful, user:", user);
       setSuccess("Account created successfully! Redirecting to home...");
 
-      // Redirect to home after successful signup
+      // Redirect to dashboard after successful signup
       setTimeout(() => {
-        router.push("/");
+        router.push("/dashboard");
       }, 2000);
     } catch (err: any) {
       setError(err.message || "GitHub signup failed. Please try again.");

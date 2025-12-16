@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import DarkVeil from "../components/DarkVeil";
 import Galaxy from "../components/GalaxyOptimized";
 import Header from "../components/Header";
@@ -8,6 +10,13 @@ import { useAuth } from "../lib/auth-context";
 
 export default function Home() {
   const { user, loading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && user) {
+      router.push("/dashboard");
+    }
+  }, [user, loading, router]);
 
   /* Commenting out loading animation as requested
   if (loading) {

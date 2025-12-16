@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import DarkVeil from "../../../components/DarkVeil";
 import { useRouter } from "next/navigation";
+import { useAuth } from "../../../lib/auth-context";
 import {
   signInWithEmail,
   signInWithGoogle,
@@ -10,11 +11,18 @@ import {
 } from "../../../lib/auth-actions";
 
 export default function LoginPage() {
+  const { user, loading } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && user) {
+      router.push("/dashboard");
+    }
+  }, [user, loading, router]);
 
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,7 +33,7 @@ export default function LoginPage() {
       await signInWithEmail(email, password);
       // Add a small delay to ensure auth state is updated before redirect
       setTimeout(() => {
-        router.push("/");
+        router.push("/dashboard");
       }, 100);
     } catch (err: any) {
       setError(err.message || "Login failed. Please try again.");
@@ -45,7 +53,7 @@ export default function LoginPage() {
 
       // Add a small delay to ensure auth state is updated before redirect
       setTimeout(() => {
-        router.push("/");
+        router.push("/dashboard");
       }, 100);
     } catch (err: any) {
       console.error("Google login failed:", err);
@@ -66,7 +74,7 @@ export default function LoginPage() {
 
       // Add a small delay to ensure auth state is updated before redirect
       setTimeout(() => {
-        router.push("/");
+        router.push("/dashboard");
       }, 100);
     } catch (err: any) {
       console.error("GitHub login failed:", err);
